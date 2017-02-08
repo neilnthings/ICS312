@@ -4,13 +4,9 @@
 %include "asm_io.inc"
 
 segment .data
-	msg1		db		"First '",0
-	msg2		db		"' was entered and then '",0
-	msg3		db		"' was entered",0
+	message		db		"First '0' was entered then '0' was entered",0
 
 segment .bss
-	sum1		resb	1
-	sum2		resb	1
 
 segment .text
 	global asm_main
@@ -18,26 +14,22 @@ asm_main:
 	enter	0,0
 	pusha
 
-	call		read_char
-	mov			[sum1], al
-	call		read_char
-	call		read_char
-	mov			[sum2], al
-	call		read_char
-	mov			eax, msg1
-	call		print_string
-	mov			eax, [sum1]
-	call		print_char
-	mov			eax, msg2
-	call		print_string
-	mov			eax, [sum2]
-	call		print_char
-	mov			eax, msg3
-	call		print_string
-	call		print_nl
+	call read_char
+	mov bl, al
+	call read_char
+	call read_char
+	mov cl, al
+	call read_char
+	mov eax, message
+	add eax, 7
+	mov [eax], bl
+	add eax, 21
+	mov [eax], cl
+	sub eax, 28
+	call print_string
+	call print_nl
 
 	popa
 	mov	eax, 0
 	leave
 	ret
-
