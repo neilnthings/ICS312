@@ -1,6 +1,3 @@
-; This simple program simply adds to 32-bit integers together
-; and stores the results bac in memory
-
 %include "asm_io.inc"
 
 segment .data
