@@ -16,6 +16,7 @@ segment .bss
     binArray        resb    95
     binLimits       resb    181
     remainder       resb    1
+    binArrayCount   resb    1
 
 segment .text
     global asm_main
@@ -153,14 +154,33 @@ not_input_95:
     ;call    print_nl               ;test-DELETE
     mov     eax, message4
     call    print_string
-    mov     bl, 00Ah
+    mov     eax, 0
+    mov     bl, 00Ah                ;Storing new line into 'bl'
+    mov     ecx, binArray
 
-start_user_input_loop:
+start_user_input_loop:              ;Start user input loop
+    mov     edx, binLimits
     call    read_char
 
+start_cmp_loop:                     ;Start compare loop
+    cmp     al, bl                  ;Check if input is newline
+    je      newline_input
+    cmp     byte [binSize], 95
+    je      bin_input_95
+    cmp     al, [edx]               ;Check if input is less than lower limit
+    jb      outside_bin_limit
+    inc     edx
+    cmp     al, [edx]               ;Check if input is more than upper limit
+    ja      outside_bin_limit
+    jmp     inside_bin_limit
+outside_bin_limit:
+    inc     edx
+    jmp start_cmp_loop
+inside_bin_limit:
+bin_input_95:
+    ;call    print_char
 
-
-    ;call    print_char             ;test-DELETE
+newline_input:
     cmp     al, bl
     jne     start_user_input_loop
 
