@@ -7,6 +7,8 @@ segment .data
     message2        db      "The total number of bins is: ",0
     message3        db      "List of bins:",0
     binContent      db      " 'xx'",0
+    message4        db      "Enter a long string: ",0
+    binDisplay      db      "Bin 'xx': ",0
 
 segment .bss
     binSize         resb    1
@@ -146,9 +148,21 @@ not_input_95:
     mov     byte [edx], 0           ;********START OF EXERCISE 4********
     sub     edx, [binCount]
     sub     edx, [binCount]
-    mov     eax, edx
+    ;mov     eax, edx               ;test-DELETE
+    ;call    print_string           ;test-DELETE
+    ;call    print_nl               ;test-DELETE
+    mov     eax, message4
     call    print_string
-    call    print_nl
+    mov     bl, 00Ah
+
+start_user_input_loop:
+    call    read_char
+
+
+
+    ;call    print_char             ;test-DELETE
+    cmp     al, bl
+    jne     start_user_input_loop
 
 invalid_user_input:
 
