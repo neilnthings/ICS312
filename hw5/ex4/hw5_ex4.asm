@@ -9,13 +9,12 @@ segment .data
     binContent      db      " 'xx'",0
     message4        db      "Enter a long string: ",0
     binDisplay      db      "Bin 'xx': ",0
+    binDisplay95    db      "Bin ' ~': ",0
     binArray        times 95    db  "0"
-    binArrayCount   db      "0"
 
 segment .bss
     binSize         resb    1
     binCount        resb    1
-    ;binArray        resb    95
     binLimits       resb    181
     remainder       resb    1
 
@@ -188,8 +187,41 @@ newline_input:
     cmp     al, bl
     jne     start_user_input_loop
 
-    mov eax, ecx
-    call print_string
+    ;mov eax, binArray
+    ;call print_string
+    mov     edx, binLimits
+    mov     bl, [binCount]
+    mov     bh, 0
+
+print_bin_displays:
+    cmp     byte [binSize], 95      ;Check if bin size is 95
+    je      display_95
+    mov     cl, [edx]
+    mov     eax, binDisplay
+    add     eax, 5
+    mov     byte [eax], cl
+    inc     edx
+    mov     cl, [edx]
+    inc     eax
+    mov     byte [eax], cl
+    sub     eax, 6
+    inc     edx
+    call    print_string
+    jmp     not_display_95          ;Skip the display 95 section
+
+display_95:
+    mov     eax, binDisplay95
+    call    print_string
+
+not_display_95:
+    ;add bh, 22
+    ;movzx eax, bh
+    ;call print_int
+
+
+    call    print_nl
+    dec     bl
+    jnz     print_bin_displays
 
 invalid_user_input:
 
