@@ -17,6 +17,7 @@ segment .bss
     binCount        resb    1
     binLimits       resb    181
     remainder       resb    1
+    binTotals       resb    1
 
 segment .text
     global asm_main
@@ -149,9 +150,6 @@ not_input_95:
     mov     byte [edx], 0           ;********START OF EXERCISE 4********
     sub     edx, [binCount]
     sub     edx, [binCount]
-    ;mov     eax, edx               ;test-DELETE
-    ;call    print_string           ;test-DELETE
-    ;call    print_nl               ;test-DELETE
     mov     eax, message4
     call    print_string
     mov     eax, 0
@@ -178,20 +176,18 @@ outside_bin_limit:
     inc     ecx
     inc     edx
     jmp start_cmp_loop
+
 inside_bin_limit:
 bin_input_95:
-    ;call    print_char             ;test-DELETE
     inc     byte [ecx]
 
 newline_input:
     cmp     al, bl
     jne     start_user_input_loop
 
-    ;mov eax, binArray
-    ;call print_string
+    mov     ebx, binArray
     mov     edx, binLimits
-    mov     bl, [binCount]
-    mov     bh, 0
+    mov     ch, [binCount]
 
 print_bin_displays:
     cmp     byte [binSize], 95      ;Check if bin size is 95
@@ -214,13 +210,24 @@ display_95:
     call    print_string
 
 not_display_95:
-    ;add bh, 22
-    ;movzx eax, bh
+    mov byte [binTotals], 0
+    ;add byte [binTotals], 14
+    ;movzx eax, byte [binTotals]
     ;call print_int
 
+increment_bin_content:
+    cmp byte [ebx], 030h
+    je dont_increment_bin_content
+    inc byte [binTotals]
+    dec byte [ebx]
+    jmp increment_bin_content
 
+dont_increment_bin_content:
+    inc ebx
+    mov eax, [binTotals]
+    call print_int
     call    print_nl
-    dec     bl
+    dec     ch
     jnz     print_bin_displays
 
 invalid_user_input:
