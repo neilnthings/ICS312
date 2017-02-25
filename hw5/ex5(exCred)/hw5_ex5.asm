@@ -235,16 +235,17 @@ increment_bin_content:
     jmp     increment_bin_content
 
 dont_increment_bin_content:
-    inc     ebx
     mov     al, [binTotals]
-    cmp al, [maxBinTotal]           ;Check if al is less than max
-    jb less_than_max
-    mov byte [maxBinTotal], al
+    cmp     al, [maxBinTotal]       ;Check if al is less than max
+    jb      less_than_max
+    mov     byte [maxBinTotal], al
 
 less_than_max:
+    add     [ebx], al
     movzx   eax, al
     call    print_int
     call    print_nl
+    inc     ebx
     dec     ch
     jnz     print_bin_displays
 
@@ -252,13 +253,15 @@ less_than_max:
     mov     bh, [maxBinTotal]
 
 start_hashes_columns:
+    mov     edx, binArray           ;Storing bin array into 'edx'
     mov     bl, [binCount]
 
 start_hashes_rows:
-    
-    mov eax, hashes
-    call print_string
 
+
+
+
+    inc edx
     dec     bl
     jnz     start_hashes_rows
 
