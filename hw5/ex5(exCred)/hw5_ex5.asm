@@ -13,6 +13,8 @@ segment .data
     binArray        times 95    db  "0"
     spaces          db      "   ",0
     hashes          db      " ##",0
+    initialPipe     db      "|",0
+    otherPipes      db      "--|",0
 
 segment .bss
     binSize         resb    1
@@ -207,6 +209,7 @@ newline_input:
 print_bin_displays:
     cmp     byte [binSize], 95      ;Check if bin size is 95
     je      display_95
+
     mov     cl, [edx]
     mov     eax, binDisplay
     add     eax, 5
@@ -238,6 +241,7 @@ dont_increment_bin_content:
     mov     al, [binTotals]
     cmp     al, [maxBinTotal]       ;Check if al is less than max
     jb      less_than_max
+
     mov     byte [maxBinTotal], al
 
 less_than_max:
@@ -265,6 +269,7 @@ start_hashes_columns:
 start_hashes_rows:
     cmp     byte [ecx], bh
     jb      less_than_bh
+
     mov     eax, hashes
     call    print_string
     jmp     printed_hashtags
@@ -282,6 +287,37 @@ printed_hashtags:
     dec     bh
     dec     byte [maxBinTotal]
     jnz     start_hashes_columns
+
+    mov     eax, initialPipe
+    call    print_string
+    mov     bl, [binCount]
+    mov     eax, otherPipes
+
+start_pipes:
+    call    print_string
+    dec     bl
+    jnz     start_pipes
+
+    call    print_nl
+    mov     bl, [binCount]
+    mov     ecx, binLimits
+
+start_last_line:
+    mov     eax, hashes
+    inc     eax
+    mov     bh, byte [ecx]
+    mov     byte [eax], bh
+    inc     ecx
+    inc     eax
+    mov     bh, byte [ecx]
+    mov     byte [eax], bh
+    inc     ecx
+    sub     eax, 2
+    call    print_string
+    dec     bl
+    jnz     start_last_line
+
+    call    print_nl
 
 invalid_user_input:
 
