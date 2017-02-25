@@ -255,9 +255,9 @@ less_than_max:
 
     call    print_nl                ;********START EXTRACREDIT********
     mov     ch, [maxBinTotal]
-    mov     bh, 030h
+    mov     bh, 030h                ;Store into 'bh' the hex for zero
 
-max_bin_loop:
+max_bin_loop:                       ;Making 'bh' equal to max bin total
     inc     bh
     dec     ch
     jnz     max_bin_loop
@@ -267,7 +267,7 @@ start_hashes_columns:
     mov     bl, [binCount]
 
 start_hashes_rows:
-    cmp     byte [ecx], bh
+    cmp     byte [ecx], bh          ;Check if what's at index is less than 'bh'
     jb      less_than_bh
 
     mov     eax, hashes
