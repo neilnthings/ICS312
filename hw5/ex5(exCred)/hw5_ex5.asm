@@ -237,7 +237,6 @@ increment_bin_content:
 dont_increment_bin_content:
     inc     ebx
     mov     al, [binTotals]
-    mov     [ebx], al
     cmp al, [maxBinTotal]           ;Check if al is less than max
     jb less_than_max
     mov byte [maxBinTotal], al
@@ -257,12 +256,13 @@ start_hashes_columns:
 
 start_hashes_rows:
     
-    
+    mov eax, hashes
+    call print_string
 
     dec     bl
     jnz     start_hashes_rows
 
-    ;call    print_nl
+    call    print_nl
     dec     bh
     jnz     start_hashes_columns
 
