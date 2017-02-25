@@ -72,9 +72,9 @@ no_remainder_exist:
     mov     eax, message3
     call    print_string
     mov     bl, 01Fh
-    mov     eax, binContent
+    mov     eax, binContent         ;Storing bin content into 'eax'
     dec     cl
-    cmp     byte [binSize], 95
+    cmp     byte [binSize], 95      ;Check if input is 95
     je      input_95
 
     mov     edx, binLimits          ;Moving address of bin limits to 'edx'
@@ -95,9 +95,19 @@ start_bin_loop:
     dec     cl
     jnz     start_bin_loop          ;End of start_bin_loop
     
-    cmp     byte [binSize], 1
+    cmp     byte [binSize], 1       ;Check if input is 1
     je      input_1
 
+    cmp     byte [binSize], 5       ;Check if input is 5
+    jne     bin_size_not_five
+    mov     ch, 5
+    
+bin_size_not_five:
+    cmp     byte [binSize], 19      ;Check if input is 19
+    jne     bin_size_not_19
+    mov     ch, 19
+
+bin_size_not_19:
     dec     ch
     mov     eax, binContent
     inc     bl
