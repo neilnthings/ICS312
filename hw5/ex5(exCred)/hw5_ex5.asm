@@ -23,6 +23,7 @@ segment .bss
     remainder       resb    1
     binTotals       resb    1
     maxBinTotal     resb    1
+    noInput         resb    1
 
 segment .text
     global asm_main
@@ -40,7 +41,7 @@ asm_main:
     cmp     ebx, 0
     jle     invalid
     cmp     ebx, 95
-    jg      invalid                 ;ASK PROF ABOUT MIXING SIGNED, UNSIGNED BRANCES
+    jg      invalid
 
     jmp     valid                   ;If valid input skip invalid section
 
@@ -170,6 +171,7 @@ not_input_95:
     mov     eax, 0
     mov     bl, 00Ah                ;Storing new line into 'bl'
     mov     bh, [binCount]
+    mov     byte [noInput], 0
 
 start_user_input_loop:              ;Start user input loop
     mov     edx, binLimits          ;Store bin limits into 'edx'
@@ -179,26 +181,32 @@ start_user_input_loop:              ;Start user input loop
 start_cmp_loop:                     ;Start compare loop
     cmp     al, bl                  ;Check if input is newline
     je      newline_input
+
     cmp     byte [binSize], 95      ;Check if bin size is 95
     je      bin_input_95
+
     cmp     al, [edx]               ;Check if input is less than lower limit
     jb      outside_bin_limit
+
     inc     edx
     cmp     al, [edx]               ;Check if input is more than upper limit
     ja      outside_bin_limit
+
     jmp     inside_bin_limit
 
 outside_bin_limit:
+    inc     byte [noInput]
     inc     ecx                     ;incrementing bin array
     inc     edx                     ;incrementing bin limits
-    jmp start_cmp_loop
+    jmp     start_cmp_loop
 
 inside_bin_limit:
 bin_input_95:
+    inc     byte [noInput]
     inc     byte [ecx]
 
 newline_input:
-    cmp     al, bl
+    cmp     al, bl                  ;Check if input equals new line
     jne     start_user_input_loop
 
     mov     ebx, binArray           ;Store bin array into 'ebx'
@@ -228,7 +236,7 @@ display_95:
     call    print_string
 
 not_display_95:
-    mov byte [binTotals], 0
+    mov     byte [binTotals], 0
 
 increment_bin_content:
     cmp     byte [ebx], 030h        ;Check if whats at index is 0
@@ -254,6 +262,10 @@ less_than_max:
     jnz     print_bin_displays
 
     call    print_nl                ;********START EXTRACREDIT********
+
+    cmp     byte [noInput], 0       ;Check if no input is 0
+    je      no_string_input
+
     mov     ch, [maxBinTotal]
     mov     bh, 030h                ;Store into 'bh' the hex for zero
 
@@ -288,6 +300,7 @@ printed_hashtags:
     dec     byte [maxBinTotal]
     jnz     start_hashes_columns
 
+no_string_input:
     mov     eax, initialPipe
     call    print_string
     mov     bl, [binCount]
