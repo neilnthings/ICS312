@@ -157,8 +157,8 @@ not_input_95:
     mov     bh, [binCount]
 
 start_user_input_loop:              ;Start user input loop
-    mov     edx, binLimits
-    mov     ecx, binArray
+    mov     edx, binLimits          ;Store bin limits into 'edx'
+    mov     ecx, binArray           ;Store bin array into 'ecx'
     call    read_char
 
 start_cmp_loop:                     ;Start compare loop
@@ -172,9 +172,10 @@ start_cmp_loop:                     ;Start compare loop
     cmp     al, [edx]               ;Check if input is more than upper limit
     ja      outside_bin_limit
     jmp     inside_bin_limit
+
 outside_bin_limit:
-    inc     ecx
-    inc     edx
+    inc     ecx                     ;incrementing bin array
+    inc     edx                     ;incrementing bin limits
     jmp start_cmp_loop
 
 inside_bin_limit:
@@ -185,9 +186,9 @@ newline_input:
     cmp     al, bl
     jne     start_user_input_loop
 
-    mov     ebx, binArray
-    mov     edx, binLimits
-    mov     ch, [binCount]
+    mov     ebx, binArray           ;Store bin array into 'ebx'
+    mov     edx, binLimits          ;Store bin limits into 'edx'
+    mov     ch, [binCount]          ;Store number of bins into 'ch'
 
 print_bin_displays:
     cmp     byte [binSize], 95      ;Check if bin size is 95
@@ -211,12 +212,9 @@ display_95:
 
 not_display_95:
     mov byte [binTotals], 0
-    ;add byte [binTotals], 14
-    ;movzx eax, byte [binTotals]
-    ;call print_int
 
 increment_bin_content:
-    cmp byte [ebx], 030h
+    cmp byte [ebx], 030h            ;Check if whats at index is 0
     je dont_increment_bin_content
     inc byte [binTotals]
     dec byte [ebx]
