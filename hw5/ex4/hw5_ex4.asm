@@ -9,14 +9,15 @@ segment .data
     binContent      db      " 'xx'",0
     message4        db      "Enter a long string: ",0
     binDisplay      db      "Bin 'xx': ",0
+    binArray        times 95    db  "0"
+    binArrayCount   db      "0"
 
 segment .bss
     binSize         resb    1
     binCount        resb    1
-    binArray        resb    95
+    ;binArray        resb    95
     binLimits       resb    181
     remainder       resb    1
-    binArrayCount   resb    1
 
 segment .text
     global asm_main
@@ -64,8 +65,8 @@ no_remainder_exist:
     movzx   eax, cl                 ;Move the quotient to eax for printing
     call    print_int
     call    print_nl
-
-    mov     [binCount], cl          ;********START OF EXERCISE 3********
+                                    ;********START OF EXERCISE 3********
+    mov     [binCount], cl          ;Store bin count 'cl' into binCount
     mov     bh, [binSize]           ;Store bin size into 'bh'
     dec     bh                      ;Decrementing 'bh' for start_bin_loop
     mov     eax, message3
@@ -156,16 +157,17 @@ not_input_95:
     call    print_string
     mov     eax, 0
     mov     bl, 00Ah                ;Storing new line into 'bl'
-    mov     ecx, binArray
+    mov     bh, [binCount]
 
 start_user_input_loop:              ;Start user input loop
     mov     edx, binLimits
+    mov     ecx, binArray
     call    read_char
 
 start_cmp_loop:                     ;Start compare loop
     cmp     al, bl                  ;Check if input is newline
     je      newline_input
-    cmp     byte [binSize], 95
+    cmp     byte [binSize], 95      ;Check if bin size is 95
     je      bin_input_95
     cmp     al, [edx]               ;Check if input is less than lower limit
     jb      outside_bin_limit
@@ -174,15 +176,20 @@ start_cmp_loop:                     ;Start compare loop
     ja      outside_bin_limit
     jmp     inside_bin_limit
 outside_bin_limit:
+    inc     ecx
     inc     edx
     jmp start_cmp_loop
 inside_bin_limit:
 bin_input_95:
-    ;call    print_char
+    ;call    print_char             ;test-DELETE
+    inc     byte [ecx]
 
 newline_input:
     cmp     al, bl
     jne     start_user_input_loop
+
+    mov eax, ecx
+    call print_string
 
 invalid_user_input:
 
