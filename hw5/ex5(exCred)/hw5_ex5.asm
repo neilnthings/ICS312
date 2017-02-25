@@ -250,23 +250,37 @@ less_than_max:
     jnz     print_bin_displays
 
     call    print_nl                ;********START EXTRACREDIT********
-    mov     bh, [maxBinTotal]
+    mov     ch, [maxBinTotal]
+    mov     bh, 030h
+
+max_bin_loop:
+    inc     bh
+    dec     ch
+    jnz     max_bin_loop
 
 start_hashes_columns:
-    mov     edx, binArray           ;Storing bin array into 'edx'
+    mov     ecx, binArray           ;Storing bin array into 'ecx'
     mov     bl, [binCount]
 
 start_hashes_rows:
+    cmp     byte [ecx], bh
+    jb      less_than_bh
+    mov     eax, hashes
+    call    print_string
+    jmp     printed_hashtags
 
+less_than_bh:
+    mov     eax, spaces
+    call    print_string
 
-
-
-    inc edx
+printed_hashtags:
+    inc     ecx
     dec     bl
     jnz     start_hashes_rows
 
     call    print_nl
     dec     bh
+    dec     byte [maxBinTotal]
     jnz     start_hashes_columns
 
 invalid_user_input:
