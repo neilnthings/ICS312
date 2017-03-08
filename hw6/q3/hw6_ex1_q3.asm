@@ -1,6 +1,3 @@
-; This simple program simply adds to 32-bit integers together
-; and stores the results bac in memory
-
 %include "asm_io.inc"
 
 segment .data
@@ -124,7 +121,7 @@ finish_printing:
     mov     edi, 53
     mov     dh, 0
     mov     dl, 26
-    mov     esi, 27
+    mov     esi, 15                     ;Esi is my counter for the loop
 
 start_dbb:
     mov     ebx, [inputInt]             ;Store input integer into ebx
@@ -138,7 +135,7 @@ start_dbb:
     inc     eax
 
 not_dbb:
-    inc     dh
+    add     dh, 2
     dec     esi
     jnz     start_dbb
 
