@@ -63,19 +63,14 @@ dostmt  :
           DO 
           {System.out.println("do_loop_"+$DO.index+":"); }
           statement* WHILE LPAREN a=identifier NOTEQUAL b=integer RPAREN
-          {System.out.println("cmp dword ["+$a.text+"], "+$b.text); }
-          {System.out.println("jnz do_loop_"+$DO.index); }
+          {System.out.println("cmp dword ["+$a.text+"], "+$b.text); 
+            System.out.println("jnz do_loop_"+$DO.index); }
           ;
 
 
 // Parse rule for print statements
 
 printstmt : 
-          PRINT term SEMICOLON 
-          {System.out.println("\tmov eax, "+$term.toString);
-            System.out.println("\tcall print_int");
-            System.out.println("\tcall print_nl");} 
-          |
           PRINT numterm
           {System.out.println("\tcall print_nl");} 
           ;
@@ -96,12 +91,12 @@ expression      :
           {System.out.println("\tmov eax,"+$a.toString);}
           | 
           a=term PLUS b=term 
-          {System.out.println("\tmov eax,"+$a.toString);}
-          {System.out.println("\tadd eax,"+$b.toString);}
+          {System.out.println("\tmov eax,"+$a.toString); 
+            System.out.println("\tadd eax,"+$b.toString);}
           | 
           a=term SUBTRACT b=term 
-          {System.out.println("\tmov eax,"+$a.toString);}
-          {System.out.println("\tsub eax,"+$b.toString);}
+          {System.out.println("\tmov eax,"+$a.toString); 
+            System.out.println("\tsub eax,"+$b.toString);}
           ;
 
 // Parse rule for terms
@@ -124,10 +119,10 @@ numterm  :
 
 comma   :
           COMMA
-          {System.out.println("\tmov al, 02Ch");}
-          {System.out.println("\tcall print_char");}
-          {System.out.println("\tmov al, 020h");}
-          {System.out.println("\tcall print_char");}
+          {System.out.println("\tmov al, 02Ch"); 
+            System.out.println("\tcall print_char"); 
+            System.out.println("\tmov al, 020h"); 
+            System.out.println("\tcall print_char");}
           ;
 
 // Parse each print lines for each term
@@ -135,11 +130,11 @@ comma   :
 printterm :
           NAME 
           {System.out.println("\tmov eax, ["+$NAME.text+"]");
-           System.out.println("\tcall print_int"); }
+            System.out.println("\tcall print_int"); }
           |
           INTEGER 
           {System.out.println("\tmov eax, "+$INTEGER.text);
-           System.out.println("\tcall print_int"); }
+            System.out.println("\tcall print_int"); }
           ;
 
 // Parse rule for identifiers
